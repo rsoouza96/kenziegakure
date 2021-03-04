@@ -1,4 +1,4 @@
-# from jutsu_model import Jutsu
+from .jutsu_model import Jutsu
 
 class Ninja:
     def __init__(self, name: str, clan: str, village: str, ninja_level: str = 'Unranked', jutsu_list: list = [],
@@ -12,15 +12,24 @@ class Ninja:
         self.chakra_pool = chakra_pool
         self.concious = concious
 
-    def learn_jutsu(self, Jutsu):
-        self.jutsu_list.append(Jutsu.__dict__)
-        return f'O ninja {self.name} {self.clan} acabou de aprender um novo jutsu: {Jutsu.jutsu_name}'
+    def learn_jutsu(self, jutsu:dict):
+        self.jutsu_list.append(jutsu.__dict__)
+        return f'O ninja {self.name} {self.clan} acabou de aprender um novo jutsu: {jutsu.jutsu_name}'
 
-# Criação de uma instância da classe Jutsu
-rasengan = Jutsu('Rasengan', 'Vento', 'a', 20, -15)
+    @staticmethod
+    def check_health(ninja_to_check:dict):
+        if ninja_to_check['health_pool'] <= 0:
+            ninja_to_check['health_pool'] = 0
+            ninja_to_check['concious'] = False
+        return ninja_to_check['concious']
 
-# Criação de uma instância da classe Ninja
-naruto = Ninja('Naruto', 'Uzumaki', 'Konoha')
-
-#Chamada do método learn_jutsu
-res = naruto.learn_jutsu(rasengan)
+    def cast_jutsu(self, jutsu:dict, adversary:dict):
+        if adversary['concious'] == False:
+            return False
+        else:
+            if jutsu in self.jutsu_list and self.chakra_pool >= jutsu['chakra_spend']:
+                adversary['health_pool'] -= jutsu['jutsu_damage']
+                self.chakra_pool -= jutsu['chakra_spend']
+                adversary['health_pool']
+                return True
+        return False
